@@ -90,10 +90,10 @@ module splitdoppelkreuzpoller(size)
 size=18;
 
 //2 halbe Doppelkreuzpoller
-//splitdoppelkreuzpoller(size);
+splitdoppelkreuzpoller(size);
 
 //Doppelkreuzpoller
-doppelkreuzpoller(size);
+//doppelkreuzpoller(size);
 
 //Doppelpoller
 //doppelpoller(size);

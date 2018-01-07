@@ -1,32 +1,3 @@
-/*
-//Grundplatte
-translate([0,0,0.5])
-cube(size=[15,5,1],center=true);
-//Senkrecht
-translate([4,0,0])
-cylinder(h=9,r1=1.5,r2=1.5,$fn=100);
-translate([-4,0,0])
-cylinder(h=9,r1=1.5,r2=1.5,$fn=100);
-//Waagrecht
-translate([-7,0,5])
-rotate(a=[0,90,0])
-cylinder(h=14,r1=1.25,r2=1.25,$fn=100);
-//AbschlussWaagrecht
-translate([7,0,5])
-    resize([1,0,0])
-        sphere(d=3, $fn=100);
-translate([-7,0,5])
-    resize([1,0,0])
-        sphere(d=3, $fn=100);
-//AbschlussSenkrecht
-translate([4,0,9])
-    resize([0,0,1])
-        sphere(d=3.5, $fn=100);
-translate([-4,0,9])
-    resize([0,0,1])
-        sphere(d=3.5, $fn=100);
-*/
-
 module grundplatte(laenge, breite)
 {
     translate([0,0,0.5])
@@ -63,17 +34,17 @@ module waagrecht(laenge, breite, hoehe)
     yoffset=(hoehe*1.2)/2;
     
     //Querstange
-    translate([-(0.45*laenge),0,yoffset])
+    translate([-(0.5*laenge),0,yoffset])
         rotate(a=[0,90,0])
-            cylinder(h=(0.9*laenge),r1=radius,r2=radius,$fn=100);
+            cylinder(h=(laenge),r1=radius,r2=radius,$fn=100);
 
     //Abschluß rechts
-    translate([(0.45*laenge),0,yoffset])
+    translate([(0.5*laenge),0,yoffset])
         resize([(laenge/13),0,0])  //früher: 15
             sphere(d=(2.4*radius), $fn=100); //früher: 2.3
 
     //Abschluß links
-    translate([-(0.45*laenge),0,yoffset])
+    translate([-(0.5*laenge),0,yoffset])
         resize([(laenge/13),0,0])
             sphere(d=(2.4*radius), $fn=100); //früher: 2.3
 }
@@ -90,26 +61,39 @@ module doppelkreuzpoller(laenge)
 
 module doppelpoller(laenge)
 {
-    breite=laenge/3;
-    hoehe=laenge/2.2;
+    breite=laenge/2.5;
+    hoehe=laenge/2.5;
 
     grundplatte(laenge, breite);
     senkrecht(laenge, breite, hoehe);
 }
 
-size=15;
-difference()
+module splitdoppelkreuzpoller(size)
 {
-    union()
+    difference()
     {
-        translate([0,-2,0])
-            rotate(a=[90,0,0])
-                doppelkreuzpoller(size);
-        translate([0,2,0])
-            rotate(a=[-90,0,0])
-                doppelkreuzpoller(size);
+        union()
+        {
+            translate([0,-2,0.5]) //0.5mm abheben, 2mm Abstand zur X-Achse
+                rotate(a=[90,0,0]) //nach links kippen
+                    doppelkreuzpoller(size);
+            translate([0,2,0.5])
+                rotate(a=[-90,0,0])
+                    doppelkreuzpoller(size);
+        }
+        translate([0,0,-size/2])
+            cube([2*size,2*size,size], center=true);
     }
-    translate([0,0,-size/2])
-        cube([2*size,2*size,size], center=true);
 }
-//translate([0,-20,0]) doppelpoller(15);
+
+
+size=18;
+
+//2 halbe Doppelkreuzpoller
+//splitdoppelkreuzpoller(size);
+
+//Doppelkreuzpoller
+doppelkreuzpoller(size);
+
+//Doppelpoller
+//doppelpoller(size);
